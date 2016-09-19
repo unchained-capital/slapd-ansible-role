@@ -1,0 +1,68 @@
+---
+
+#
+# Basic Installation
+#
+
+- name: Ensure system packages are installed
+  apt: name="{{ item }}" state=present
+  with_items: "{{ slapd_system_packages }}"
+  tags: [slapd]
+
+- name: Ensure Python packages are installed
+  pip: name="{{ item }}" state=present
+  with_items: "{{ slapd_python_packages }}"
+  tags: [slapd, python]
+
+- name: Enable slapd service
+  tags: [slapd]
+  service: name=slapd state=started enabled=yes
+
+#
+# Optional actions to take
+#
+  
+- include: move_default_database_directory.yml
+  when:    slapd_data_dir != slapd_default_data_dir
+  tags:    [slapd]
+
+- include: set_admin_password.yml
+  when:    slapd_set_password or slapd_reset_password
+  tags:    [slapd, password]
+
+- name: Disable anonymous bind
+  when: slapd_disable_anon_bind
+  ldap_attr:
+    dn:        "olcDatabase={-1}frontend,cn=config"
+    name:      olcRequires
+    values:    authc
+    state:     exact
+  tags: [slapd]
+
+
+#
+# FIXME I'm having trouble with getting these indices to be
+# idempotent...running it in two passes, first with state:exact and
+# then with state:present, seems to do it.  It's wasteful of resources
+# though...this is ultimately probably due to a bug somewhere in how
+# ldap_attr handles multi-valued attributes.
+#
+- name: Ensure indices are defined (first pass)
+  when: slapd_indices | length
+  ldap_attr:
+    dn:     "olcDatabase={1}hdb,cn=config"
+    name:   olcDbIndex
+    values: "{{ item }}"
+    state:  exact
+  tags: [slapd, indices]
+  with_items: "{{ slapd_indices }}"
+  
+- name: Ensure indices are defined (second pass)
+  when: slapd_indices | length
+  ldap_attr:
+    dn:     "olcDatabase={1}hdb,cn=config"
+    name:   olcDbIndex
+    values: "{{ item }}"
+    state:  present
+  tags: [slapd, indices]
+  with_items: "{{ slapd_indices }}"

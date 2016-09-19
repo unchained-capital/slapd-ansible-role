@@ -1,0 +1,37 @@
+---
+
+slapd_system_packages:
+  # These are for slapd itself
+  - slapd 
+  - ldap-utils
+  # These are so we we can install python-ldap
+  - libsasl2-dev
+  - libldap2-dev
+  - libssl-dev
+
+slapd_python_packages:
+  - python-ldap
+
+slapd_user:  openldap
+slapd_group: openldap
+
+slapd_conf_dir: /etc/ldap
+
+slapd_config_data_default_dir: "{{ slapd_root_conf_dir }}/slapd.d"
+
+slapd_default_data_dir: /var/lib/ldap
+slapd_data_dir:         "{{ slapd_default_data_dir }}"
+
+slapd_apparmor_dir: /etc/apparmor.d
+slapd_apparmor_name: usr.sbin.slapd
+
+slapd_openssh: true
+
+slapd_set_password:   true
+slapd_reset_password: false
+slapd_admin_password: ~         # will cause an error on first run unless set!
+
+slapd_disable_anon_bind: false
+
+slapd_indices:
+  - "objectClass eq"
