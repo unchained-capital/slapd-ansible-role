@@ -39,30 +39,18 @@
     state:     exact
   tags: [slapd]
 
+- name: Ensure indices are defined
+  when: slapd_indices | length
+  ldap_upsert:
+    objectClass: olcDatabaseConfig #  won't be used since this DN already exists
+    dn:         "olcDatabase={1}hdb,cn=config"
+    olcDbIndex: "{{ slapd_indices }}"
+  tags: [slapd, indices]
 
-#
-# FIXME I'm having trouble with getting these indices to be
-# idempotent...running it in two passes, first with state:exact and
-# then with state:present, seems to do it.  It's wasteful of resources
-# though...this is ultimately probably due to a bug somewhere in how
-# ldap_attr handles multi-valued attributes.
-#
-- name: Ensure indices are defined (first pass)
-  when: slapd_indices | length
-  ldap_attr:
-    dn:     "olcDatabase={1}hdb,cn=config"
-    name:   olcDbIndex
-    values: "{{ item }}"
-    state:  exact
-  tags: [slapd, indices]
-  with_items: "{{ slapd_indices }}"
-  
-- name: Ensure indices are defined (second pass)
-  when: slapd_indices | length
-  ldap_attr:
-    dn:     "olcDatabase={1}hdb,cn=config"
-    name:   olcDbIndex
-    values: "{{ item }}"
-    state:  present
-  tags: [slapd, indices]
-  with_items: "{{ slapd_indices }}"
+- name: Ensure access controls are defined
+  when: slapd_acls | length
+  ldap_upsert:
+    objectClass: olcDatabaseConfig #  won't be used since this DN already exists
+    dn:          "olcDatabase={1}hdb,cn=config"
+    olcAccess:   "{{ slapd_acls }}"
+  tags: [slapd, acls]
