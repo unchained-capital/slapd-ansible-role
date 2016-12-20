@@ -1,9 +1,5 @@
 ---
 
-#
-# Basic Installation
-#
-
 - name: Ensure system packages are installed
   apt: name="{{ item }}" state=present
   with_items: "{{ slapd_system_packages }}"
@@ -17,40 +13,13 @@
 - name: Enable slapd service
   tags: [slapd]
   service: name=slapd state=started enabled=yes
-
-#
-# Optional actions to take
-#
   
 - include: move_default_database_directory.yml
   when:    slapd_data_dir != slapd_default_data_dir
   tags:    [slapd]
 
-- include: set_admin_password.yml
-  when:    slapd_set_password or slapd_reset_password
-  tags:    [slapd, password]
+- include: schemas.yml
+  tags: [slapd, schemas]
 
-- name: Disable anonymous bind
-  when: slapd_disable_anon_bind
-  ldap_attr:
-    dn:        "olcDatabase={-1}frontend,cn=config"
-    name:      olcRequires
-    values:    authc
-    state:     exact
-  tags: [slapd]
-
-- name: Ensure indices are defined
-  when: slapd_indices | length
-  ldap_upsert:
-    objectClass: olcDatabaseConfig #  won't be used since this DN already exists
-    dn:         "olcDatabase={1}hdb,cn=config"
-    olcDbIndex: "{{ slapd_indices }}"
-  tags: [slapd, indices]
-
-- name: Ensure access controls are defined
-  when: slapd_acls | length
-  ldap_upsert:
-    objectClass: olcDatabaseConfig #  won't be used since this DN already exists
-    dn:          "olcDatabase={1}hdb,cn=config"
-    olcAccess:   "{{ slapd_acls }}"
-  tags: [slapd, acls]
+- include: security.yml
+  tags:    [slapd, security]

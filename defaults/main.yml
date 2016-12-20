@@ -36,4 +36,6 @@ slapd_disable_anon_bind: false
 slapd_indices:
   - "objectClass eq"
 
-slapd_acls: []  
+slapd_acls: []
+
+slapd_custom_schemas: []
