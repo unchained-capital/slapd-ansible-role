@@ -6,9 +6,6 @@
 # node.  These tasks move this default database from /var/lib/ldap to
 # a new location (`slapd_data_dir`).
 #
-# If AppArmor is installed, the corresponding profile will be
-# replaced.
-#
 
 - name: Ensure data root exists
   when: slapd_data_root_dir is defined
@@ -26,22 +23,6 @@
 - name: Copy default database directory to new directory
   when: slapd_created_new_data_dir.changed
   shell: "cp -p -R {{ slapd_default_data_dir }}/* {{ slapd_data_dir }}"
-
-- name: Check whether AppArmor restricts slapd
-  stat: path="{{ slapd_apparmor_dir }}/{{slapd_apparmor_name }}"
-  register: slapd_apparmor
-  tags: [apparmor]
-
-- name: Tell AppArmor to allow slapd to access new directory
-  when: slapd_apparmor.stat.exists
-  template: src=templates/apparmor.j2 dest="{{ slapd_apparmor_dir }}/local/{{ slapd_apparmor_name }}" owner=root group=root mode=0644
-  register: slapd_apparmor_override
-  tags: [apparmor]
-
-- name: Copy default config database to new directory
-  when: slapd_apparmor_override.changed
-  command: "apparmor_parser -r {{ slapd_apparmor_dir }}/{{ slapd_apparmor_name }}"
-  tags: [apparmor]
 
 - name: Set data directory via LDAP
   ldap_attr:

@@ -10,13 +10,19 @@
   with_items: "{{ slapd_python_packages }}"
   tags: [slapd, python]
 
+- include: apparmor.yml
+  tags: [apparmor]
+  
 - name: Enable slapd service
   tags: [slapd]
   service: name=slapd state=started enabled=yes
-  
+
 - include: move_default_database_directory.yml
   when:    slapd_data_dir != slapd_default_data_dir
   tags:    [slapd]
+
+- include: logging.yml
+  tags: [slapd, log]
 
 - include: schemas.yml
   tags: [slapd, schemas]

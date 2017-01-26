@@ -39,3 +39,10 @@ slapd_indices:
 slapd_acls: []
 
 slapd_custom_schemas: []
+
+# See http://www.openldap.org/doc/admin24/slapdconf2.html
+slapd_log_level:      stats
+slapd_log_dir:        /var/log/ldap
+slapd_syslog_dir:     /etc/rsyslog.d
+slapd_syslog_service: rsyslog
+slapd_logrotate_dir:  /etc/logrotate.d
