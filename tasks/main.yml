@@ -29,3 +29,7 @@
 
 - include: security.yml
   tags:    [slapd, security]
+
+- include: certificates.yml
+  when: slapd_certificate_file
+  tags: [slapd, certificates]

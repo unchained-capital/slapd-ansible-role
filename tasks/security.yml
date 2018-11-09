@@ -16,6 +16,6 @@
   when: slapd_acls | length
   ldap_upsert:
     objectClass: olcDatabaseConfig #  won't be used since this DN already exists
-    dn:          "olcDatabase={1}hdb,cn=config"
+    dn:          "olcDatabase={1}mdb,cn=config"
     olcAccess:   "{{ slapd_acls }}"
   tags: [slapd, acls]
