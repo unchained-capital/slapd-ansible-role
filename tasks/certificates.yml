@@ -4,13 +4,13 @@
 #
 #dn: cn=config
 #replace: olcTLSCACertificateFile
-#olcTLSCACertificateFile: /etc/ssl/certs/unchained-capital.pem
+#olcTLSCACertificateFile: /etc/ssl/certs/ca-certfile.pem
 #-
 #replace: olcTLSCertificateFile
-#olcTLSCertificateFile: /etc/ssl/certs/trustless.unchained-capital.us.pem
+#olcTLSCertificateFile: /etc/ssl/certs/ldaps-server.pem
 #-
 #replace: olcTLSCertificateKeyFile
-#olcTLSCertificateKeyFile: /etc/ssl/private/trustless.unchained-capital.us.key
+#olcTLSCertificateKeyFile: /etc/ssl/private/ldaps-server.key
 #
 # and then run "sudo ldapmodify  -H ldapi:// -Y EXTERNAL -f ~/tls.ldif  -v"
 # if you have trouble with that, try turning replace: into add: in the ldif
