@@ -1,0 +1,37 @@
+---
+
+# You may have to put the following into a file called tls.ldif
+#
+#dn: cn=config
+#replace: olcTLSCACertificateFile
+#olcTLSCACertificateFile: /etc/ssl/certs/ca-certfile.pem
+#-
+#replace: olcTLSCertificateFile
+#olcTLSCertificateFile: /etc/ssl/certs/ldaps-server.pem
+#-
+#replace: olcTLSCertificateKeyFile
+#olcTLSCertificateKeyFile: /etc/ssl/private/ldaps-server.key
+#
+# and then run "sudo ldapmodify  -H ldapi:// -Y EXTERNAL -f ~/tls.ldif  -v"
+# if you have trouble with that, try turning replace: into add: in the ldif
+
+- name: Ensure CA Certificate is set
+  ldap_attr:
+    dn:     'cn=config'
+    state:  exact
+    name:   olcTLSCACertificateFile
+    values: "{{ slapd_ca_certificate_file }}"
+
+- name: Ensure TLS Certificate is set
+  ldap_attr:
+    dn:     'cn=config'
+    state:  exact
+    name:   olcTLSCertificateFile
+    values: "{{ slapd_certificate_file }}"
+
+- name: Ensure TLS Certificate Key is set
+  ldap_attr:
+    dn:     'cn=config'
+    state:  exact
+    name:   olcTLSCertificateKeyFile
+    values: "{{ slapd_certificate_key }}"

@@ -46,3 +46,7 @@ slapd_log_dir:        /var/log/ldap
 slapd_syslog_dir:     /etc/rsyslog.d
 slapd_syslog_service: rsyslog
 slapd_logrotate_dir:  /etc/logrotate.d
+
+slapd_certificate_file: None
+slapd_certificate_key: None
+slapd_ca_certificate_file: None
