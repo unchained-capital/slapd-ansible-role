@@ -22,7 +22,7 @@
 
 - name: Copy default database directory to new directory
   when: slapd_created_new_data_dir.changed
-  shell: "cp -p -R {sudo { slapd_default_data_dir }}/* {{ slapd_data_dir }}"
+  shell: "cp -p -R {{ slapd_default_data_dir }}/* {{ slapd_data_dir }}"
 
 - name: Set data directory via LDAP
   ldap_attr:
