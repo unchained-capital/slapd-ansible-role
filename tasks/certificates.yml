@@ -1,6 +1,6 @@
----    
+---
 
-# You may have to put the followint into a file called tls.ldif
+# You may have to put the following into a file called tls.ldif
 #
 #dn: cn=config
 #replace: olcTLSCACertificateFile
